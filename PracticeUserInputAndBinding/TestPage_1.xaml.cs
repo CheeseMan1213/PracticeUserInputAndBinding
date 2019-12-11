@@ -56,36 +56,31 @@ namespace PracticeUserInputAndBinding
             }
 
         }
+        //This method is written to consume only one message at a time.
         public void Consume(object sender, EventArgs e)
         {
-            var factory = new ConnectionFactory() { HostName = "localhost" };
+            var factory = new ConnectionFactory() { HostName = "localhost" };// Creates ConnectionFactory.
+            //This is a "using" statement, and not an import.
+            //Here, is serves to automatically close the connection and the channel once is leave the block.
+            //Basically, is will automatically run channel.Close(), and connection.Close()
             using (var connection = factory.CreateConnection())
             using (var channel = connection.CreateModel())
             {
-                var queue = channel.QueueDeclare(queue: "hello", durable: false, exclusive: false, autoDelete: false, arguments: null);
+                // Gets a single message from the queue without acknowledging.
+                BasicGetResult result = channel.BasicGet(queue: "hello", autoAck: false);
 
-                //var consumer = new EventingBasicConsumer(channel);
-                var consumer = new QueueingBasicConsumer(channel);
-                channel.BasicConsume(queue: "hello", autoAck: false, consumer: consumer); // changed autoAck: true
-
-                //BasicDeliverEventArgs ea = consumer.Queue.Dequeue();
-                //var consumer = new EventingBasicConsumer(channel);
-                //consumer.Received += (modle, ea) =>
-                if(queue.MessageCount != 0)
+                if (result == null)// Checks if the queue is empty.
                 {
-                    BasicDeliverEventArgs ea = consumer.Queue.Dequeue();
-
-
-                    //var body = ea.Body;
-                    var message = Encoding.UTF8.GetString(ea.Body);
-                    Console.WriteLine("Received {0}", message);
-                    rabbitMQViewModel.Message = "Consumed " + message;
-
-                    channel.BasicAck(ea.DeliveryTag, false);
+                    Console.WriteLine("No messages avaliable at this time.");
                 }
                 else
                 {
-                    Console.WriteLine("No message sent yet.");
+                    IBasicProperties props = result.BasicProperties;// Collects message properties.
+                    byte[] body = result.Body;// Collects message body.
+                    string message = Encoding.UTF8.GetString(body);// Converts body from bytes to string.
+                    channel.BasicAck(result.DeliveryTag, false);// Manually sends acknowledgement for message.
+                    Console.WriteLine("Received {0}", message);// Prints message to console.
+                    rabbitMQViewModel.Message = "Consumed " + message;// Displays message in label in the UI.
                 }
             }
         }
