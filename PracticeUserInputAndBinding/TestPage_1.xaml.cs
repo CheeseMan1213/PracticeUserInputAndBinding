@@ -41,13 +41,10 @@ namespace PracticeUserInputAndBinding
         }
         public void Send(object sender, EventArgs e)
         {
-            //rabbitMQViewModel.Message = "Jump  send";
-
             var factory = new ConnectionFactory() { HostName = "localhost" };
             using (var connection = factory.CreateConnection())
             using (var channel = connection.CreateModel())
             {
-                channel.BasicQos(prefetchCount: 1, prefetchSize: 0, global: false);
                 channel.QueueDeclare(queue: "hello", durable: false, exclusive: false, autoDelete: false, arguments: null);
 
                 string message = "Hello World!";
@@ -58,26 +55,19 @@ namespace PracticeUserInputAndBinding
                 rabbitMQViewModel.Message = "published " + message;
             }
 
-            //Console.WriteLine(" Press [enter] to exit.");
-            //Console.ReadLine();
         }
         public void Consume(object sender, EventArgs e)
         {
-            //rabbitMQViewModel.Message = "Jump  __  comsume";
-
             var factory = new ConnectionFactory() { HostName = "localhost" };
             using (var connection = factory.CreateConnection())
             using (var channel = connection.CreateModel())
             {
                 var queue = channel.QueueDeclare(queue: "hello", durable: false, exclusive: false, autoDelete: false, arguments: null);
-                //uint x = queue.MessageCount;
 
                 //var consumer = new EventingBasicConsumer(channel);
                 var consumer = new QueueingBasicConsumer(channel);
                 channel.BasicConsume(queue: "hello", autoAck: false, consumer: consumer); // changed autoAck: true
 
-
-                //var ea = (BasicDeliverEventArgs)consumer.Queue.Dequeue();
                 //BasicDeliverEventArgs ea = consumer.Queue.Dequeue();
                 //var consumer = new EventingBasicConsumer(channel);
                 //consumer.Received += (modle, ea) =>
@@ -97,12 +87,6 @@ namespace PracticeUserInputAndBinding
                 {
                     Console.WriteLine("No message sent yet.");
                 }
-                //channel.BasicConsume(queue: "hello", autoAck: true, consumer: consumer); // changed autoAck: true
-                //channel.BasicConsume(queue: "hello", autoAck: false, consumer: consumer);
-
-                //channel.BasicConsume(queue: "hello", autoAck: false, consumer: consumer); // changed autoAck: true
-                //Console.WriteLine(" Press [enter] to exit.");
-                //Console.ReadLine();
             }
         }
     }
