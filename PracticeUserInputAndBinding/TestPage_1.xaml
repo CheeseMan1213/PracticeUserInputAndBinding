@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="PracticeUserInputAndBinding.TestPage_1">
+    <ContentPage.Content>
+    <Grid RowSpacing="0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="AUTO"></RowDefinition><!--index 0-->
+            <RowDefinition Height="AUTO"></RowDefinition><!--index 1-->
+            <RowDefinition Height="*"></RowDefinition><!--index 2-->
+            <RowDefinition Height="AUTO"></RowDefinition><!--index 3-->
+            <RowDefinition Height="AUTO"></RowDefinition><!--index 4-->
+            <RowDefinition Height="AUTO"></RowDefinition><!--index 5-->
+            <RowDefinition Height="AUTO"></RowDefinition><!--index 6-->
+        </Grid.RowDefinitions>
+        <!--Row 0 = for honoring the iphone safe area-->
+        <BoxView BackgroundColor="White" Grid.Row="0"></BoxView>
+        <!--Row 1-->
+        <BoxView BackgroundColor="LightPink" Grid.Row="1"></BoxView>
+        <Label Grid.Row="1" Text="Test Page 2." HorizontalOptions="Center" VerticalOptions="CenterAndExpand"></Label>
+        <!--Row 2-->
+        <BoxView BackgroundColor="White" Grid.Row="2"></BoxView>
+        <ListView x:Name="myList" Grid.Row="2">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <TextCell Text="{Binding .}"><!-- The dot '.' means 'this' It is analogous to "Current directory." -->
+                        <!-- It makes ituse the variable with the same name as given for the ListView -->
+                        <!--  -->
+                    </TextCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <BoxView BackgroundColor="White" Grid.Row="3"></BoxView>
+        <Label TextColor="Black" x:Name="vm" Grid.Row="3" Text="{Binding Message}" HorizontalOptions="Center" VerticalOptions="CenterAndExpand"></Label>
+        <BoxView BackgroundColor="White" Grid.Row="4"></BoxView>
+        <!--<Label Grid.Row="3" Text="To become my button" HorizontalOptions="Center" VerticalOptions="CenterAndExpand"></Label>-->
+        <Button TextColor="Red" BorderWidth="2" BorderColor="Black" Grid.Row="4" Text="Send" Clicked="Send"></Button>
+
+        <Button TextColor="Red" BorderWidth="2" BorderColor="Black" Grid.Row="5" Text="Consume" Clicked="Consume"></Button>
+
+        <!--Row 4 = for honoring the iphone safe area-->
+        <BoxView BackgroundColor="White" Grid.Row="6"></BoxView>
+    </Grid>
+    </ContentPage.Content>
+</ContentPage>
