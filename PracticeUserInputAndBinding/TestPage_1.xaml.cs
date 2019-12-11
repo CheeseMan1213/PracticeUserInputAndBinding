@@ -12,7 +12,10 @@ using System.Runtime.CompilerServices;
 
 namespace PracticeUserInputAndBinding
 {
-    //Using classes from MainPage.xaml.cs too.
+    /*
+    This and the other 2 classes from the file from MainPage.xaml.cs
+    are used to set up a class that can be used with the UI and updated the displayed data in realtime.
+     */
     class RabbitMQViewModel : ViewModelBase
     {
         string message;
@@ -36,23 +39,27 @@ namespace PracticeUserInputAndBinding
             InitializeComponent();
             rabbitMQViewModel = new RabbitMQViewModel();
             BindingContext = rabbitMQViewModel;
-            rabbitMQViewModel.Message = "Jump";
+            rabbitMQViewModel.Message = "Jump";// Initalizes the label text.
             myList.ItemsSource = new List<string> { "Test 1", "Test 2", "Test 3", "Test 4", "Test 5", "Test 6", "Test 7", "Test 8" };
         }
         public void Send(object sender, EventArgs e)
         {
-            var factory = new ConnectionFactory() { HostName = "localhost" };
+            var factory = new ConnectionFactory() { HostName = "localhost" };// Creates ConnectionFactory.
+            //This is a "using" statement, and not an import.
+            //Here, is serves to automatically close the connection and the channel once is leave the block.
+            //Basically, is will automatically run channel.Close(), and connection.Close()
             using (var connection = factory.CreateConnection())
             using (var channel = connection.CreateModel())
             {
+                // Creates a new queue
                 channel.QueueDeclare(queue: "hello", durable: false, exclusive: false, autoDelete: false, arguments: null);
-
-                string message = "Hello World!";
-                var body = Encoding.UTF8.GetBytes(message);
-
+                
+                string message = "Hello World!";// Creates a message
+                var body = Encoding.UTF8.GetBytes(message);// Converts the message to bytes.
+                // Sends the message to the queue
                 channel.BasicPublish(exchange: "", routingKey: "hello", basicProperties: null, body: body);
-                Console.WriteLine("Sent {0}", message);
-                rabbitMQViewModel.Message = "published " + message;
+                Console.WriteLine("Sent {0}", message);// Prints message to console.
+                rabbitMQViewModel.Message = "published " + message;// Displays what was sent in label in the UI.
             }
 
         }
@@ -80,7 +87,7 @@ namespace PracticeUserInputAndBinding
                     string message = Encoding.UTF8.GetString(body);// Converts body from bytes to string.
                     channel.BasicAck(result.DeliveryTag, false);// Manually sends acknowledgement for message.
                     Console.WriteLine("Received {0}", message);// Prints message to console.
-                    rabbitMQViewModel.Message = "Consumed " + message;// Displays message in label in the UI.
+                    rabbitMQViewModel.Message = "Consumed " + message;// Displays what was received in label in the UI.
                 }
             }
         }
