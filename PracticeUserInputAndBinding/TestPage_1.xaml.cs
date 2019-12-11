@@ -54,10 +54,11 @@ namespace PracticeUserInputAndBinding
                 // Creates a new queue
                 channel.QueueDeclare(queue: "hello", durable: false, exclusive: false, autoDelete: false, arguments: null);
                 
-                string message = "Hello World!";// Creates a message
+                string message = "Hawley";// Creates a message
                 var body = Encoding.UTF8.GetBytes(message);// Converts the message to bytes.
                 // Sends the message to the queue
-                channel.BasicPublish(exchange: "", routingKey: "hello", basicProperties: null, body: body);
+                //channel.BasicPublish(exchange: "", routingKey: "hello", basicProperties: null, body: body);// For sending to itself.
+                channel.BasicPublish(exchange: "exchange1", routingKey: "hello1", basicProperties: null, body: body);// For sending to the Spring app.
                 Console.WriteLine("Sent {0}", message);// Prints message to console.
                 rabbitMQViewModel.Message = "published " + message;// Displays what was sent in label in the UI.
             }
